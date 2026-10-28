@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Theme } from './theme.ts'
 import {
+  DARK_QUERY,
   getSystemTheme,
   isTheme,
   readStoredTheme,
@@ -18,8 +19,6 @@ type UseThemeResult = {
   theme: Theme
   toggleTheme: () => void
 }
-
-const DARK_QUERY = '(prefers-color-scheme: dark)'
 
 function getInitialState(): ThemeState {
   const stored = readStoredTheme()
@@ -39,10 +38,21 @@ export function useTheme(): UseThemeResult {
   }, [theme])
 
   useEffect(() => {
+    if (explicit) {
+      writeStoredTheme(theme)
+    }
+  }, [theme, explicit])
+
+  useEffect(() => {
     if (explicit || typeof window.matchMedia !== 'function') {
       return
     }
-    const query = window.matchMedia(DARK_QUERY)
+    let query: MediaQueryList
+    try {
+      query = window.matchMedia(DARK_QUERY)
+    } catch {
+      return
+    }
     const handleChange = (event: MediaQueryListEvent) => {
       const system: Theme = event.matches ? 'dark' : 'light'
       setState((prev) => (prev.explicit ? prev : { ...prev, theme: system }))
@@ -54,9 +64,10 @@ export function useTheme(): UseThemeResult {
   }, [explicit])
 
   const toggleTheme = () => {
-    const next: Theme = theme === 'dark' ? 'light' : 'dark'
-    setState({ theme: next, explicit: true })
-    writeStoredTheme(next)
+    setState((prev) => ({
+      theme: prev.theme === 'dark' ? 'light' : 'dark',
+      explicit: true,
+    }))
   }
 
   return { theme, toggleTheme }

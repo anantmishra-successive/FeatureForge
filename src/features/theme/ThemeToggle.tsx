@@ -4,7 +4,7 @@ import './ThemeToggle.css'
 
 type ThemeToggleProps = Omit<
   ComponentPropsWithoutRef<'button'>,
-  'onClick' | 'aria-pressed' | 'type'
+  'onClick' | 'aria-pressed' | 'type' | 'aria-label' | 'children'
 >
 
 export function ThemeToggle({ className, ...rest }: ThemeToggleProps) {
