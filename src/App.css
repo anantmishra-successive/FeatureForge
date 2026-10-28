@@ -1,3 +1,15 @@
+.app-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 12px 32px;
+  border-bottom: 1px solid var(--border);
+
+  @media (max-width: 1024px) {
+    padding: 12px 20px;
+  }
+}
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
